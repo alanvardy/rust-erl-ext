@@ -790,47 +790,47 @@ impl<'a> Encoder<'a> {
                 }
             },
             Eterm::Map(map) => {
-                try!(self._encode_tag(ErlTermTag::MAP_EXT));
+                self._encode_tag(ErlTermTag::MAP_EXT)?;
                 self.encode_map(map)
             },
             Eterm::Nil =>
                 self._encode_tag(ErlTermTag::NIL_EXT),
             Eterm::String(s) => {
-                try!(self._encode_tag(ErlTermTag::STRING_EXT));
+                self._encode_tag(ErlTermTag::STRING_EXT)?;
                 self.encode_string(s)
             },
             Eterm::List(list) => {
-                try!(self._encode_tag(ErlTermTag::LIST_EXT));
+                self._encode_tag(ErlTermTag::LIST_EXT)?;
                 self.encode_list(list)
             },
             Eterm::Binary(bin) => {
-                try!(self._encode_tag(ErlTermTag::BINARY_EXT));
+                self._encode_tag(ErlTermTag::BINARY_EXT)?;
                 self.encode_binary(bin)
             },
             Eterm::BigNum(num) => {
                 let (sign, bytes) = num.to_bytes_le();
                 if bytes.len() < 255 {
-                    try!(self._encode_tag(ErlTermTag::SMALL_BIG_EXT));
+                    self._encode_tag(ErlTermTag::SMALL_BIG_EXT)?;
                     self.encode_small_big(sign, bytes)
                 } else {
-                    try!(self._encode_tag(ErlTermTag::LARGE_BIG_EXT));
+                   self._encode_tag(ErlTermTag::LARGE_BIG_EXT)?;
                     self.encode_large_big(sign, bytes)
                 }
             },
             Eterm::Fun(fun) => {
-                try!(self._encode_tag(ErlTermTag::FUN_EXT));
+                self._encode_tag(ErlTermTag::FUN_EXT)?;
                 self.encode_fun(fun)
             },
             Eterm::NewFun(new_fun) => {
-                try!(self._encode_tag(ErlTermTag::NEW_FUN_EXT));
+                self._encode_tag(ErlTermTag::NEW_FUN_EXT)?;
                 self.encode_new_fun(new_fun)
             },
             Eterm::Export(export) => {
-                try!(self._encode_tag(ErlTermTag::EXPORT_EXT));
+                self._encode_tag(ErlTermTag::EXPORT_EXT)?;
                 self.encode_export(export)
             },
             Eterm::BitBinary(bit_binary) => {
-                try!(self._encode_tag(ErlTermTag::BIT_BINARY_EXT));
+                self._encode_tag(ErlTermTag::BIT_BINARY_EXT)?;
                 self.encode_bit_binary(bit_binary)
             }
         }
@@ -849,8 +849,8 @@ mod test {
         let mut writer = Vec::new();
         {
             let mut encoder = Encoder::new(&mut writer, false, false, true);
-            try!(encoder.write_prelude());
-            try!(encoder.encode_term(term));
+            encoder.write_prelude()?;
+            encoder.encode_term(term)?;
         }
         Ok(writer)
     }
